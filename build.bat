@@ -1,1 +1,1 @@
-tsc -m commonjs --out js/app.js refall.ts
+tsc -t ES5 --outFile app.js refall.ts

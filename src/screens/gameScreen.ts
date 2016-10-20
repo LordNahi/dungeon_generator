@@ -1,4 +1,4 @@
-class gameScreen extends Phaser.State{
+class gameScreen extends Phaser.State {
 
     preload() {
 
@@ -11,5 +11,4 @@ class gameScreen extends Phaser.State{
     update() {
 
     }
-
 }
