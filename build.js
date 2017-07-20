@@ -55,8 +55,13 @@ if (option) {
     switch (option) {
         case "--build":
             buildProject();
-        break;
+            break;
+
+        default:
+            console.log("Invalid Option ...");
+            break
 
         // Add new cases as required ...
     }
+    console.log("Done");
 }
