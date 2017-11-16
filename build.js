@@ -51,6 +51,7 @@ function deploy(codeOnly) {
 }
 
 var option = process.argv[2];
+var validCommand = true;
 if (option) {
     switch (option) {
         case "--build":
@@ -59,9 +60,14 @@ if (option) {
 
         default:
             console.log("Invalid Option ...");
+            validCommand = false;
             break
-
-        // Add new cases as required ...
+        
     }
-    console.log("Done");
+
+    if (validCommand) {
+        console.log("Done");
+    } else {
+        console.log("Error");
+    }
 }
