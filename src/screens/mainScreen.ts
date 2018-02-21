@@ -1,39 +1,49 @@
 namespace Screens {
     export class MainScreen extends Phaser.State {
+        public cursors: Phaser.CursorKeys;
+        public levelGenerator: Generators.LevelGenerator;
+        public level: Level.LevelContainer;
 
         constructor() {
             super();
         }
 
         public create() {
-            // Place holder shit ...
-            game.stage.backgroundColor = 0xa0c4ff;
+            game.stage.backgroundColor = 0xfff;
+            game.world.setBounds(0, 0, 3000, 3000);
 
-            let text: Phaser.Text;
-            let style: any;
+            this.cursors = game.input.keyboard.createCursorKeys();
 
-            style = {
-                font: "Arial",
-                fill: "#FFFFFF",
-                fontSize: "50px",
-            };
-            text = this.game.add.text(game.width / 2, game.height / 2, "TEMPLATE", style);
-            text.anchor.setTo(0.5);
-            text.rotation -= (2 * Math.PI) * 0.2;
+            this.levelGenerator = new Generators.LevelGenerator();
+            this.level = this.levelGenerator.generateLevel(15);
+            this.level.position.setTo(game.world.bounds.width / 2, game.world.bounds.height / 2);
 
-            game.add.tween(text).to(
-                {rotation: text.rotation + (2 * Math.PI) * 0.4},
-                1000,
-                Phaser.Easing.Linear.None,
-                true,
-                0,
-                -1,
-                true,
-            );
+            game.camera.x += game.world.bounds.width / 2 - game.width / 2;
+            game.camera.y += game.world.bounds.height / 2 - game.height / 2;
         }
         
         public update() {
-            
+            if (this.cursors.up.isDown)
+            {
+                game.camera.y -= 10;
+            }
+            else if (this.cursors.down.isDown)
+            {
+                game.camera.y += 10;
+            }
+
+            if (this.cursors.left.isDown)
+            {
+                game.camera.x -= 10;
+            }
+            else if (this.cursors.right.isDown)
+            {
+                game.camera.x += 10;
+            }
+        }
+
+        public render() {
+            game.debug.cameraInfo(game.camera, 32, 32);
         }
     }
 }
