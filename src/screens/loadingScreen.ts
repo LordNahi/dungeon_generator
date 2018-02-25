@@ -13,8 +13,8 @@ namespace Screens {
         }
 
         private prepareLoadStack() {
-            // Add your assets here using asset packs or standard game.load ...
-            // this.game.load.image("blah", "blah/blah/blah.bmp");
+            // Prepare load queue ...
+            this.game.load.image("arrow", "./assets/debug/arrow.png");
 
             // Kick off loader ...
             this.game.load.start();

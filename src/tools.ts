@@ -6,6 +6,8 @@ namespace tools {
     export function choose(...args: any[]): any {
         if (args.length > 0) {
             return args[Math.round(Math.random() * (args.length - 1))];
+        } else {
+            return null;
         }
     }
 

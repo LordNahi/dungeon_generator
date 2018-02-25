@@ -9,13 +9,23 @@ namespace Screens {
         }
 
         public create() {
-            game.stage.backgroundColor = 0xfff;
-            game.world.setBounds(0, 0, 3000, 3000);
-
+            game.stage.backgroundColor = 0xffffff;
             this.cursors = game.input.keyboard.createCursorKeys();
 
+            let mapSize = 150;
+
+            game.world.setBounds(0, 0, Config.generator.tileSize * mapSize, 3000);
+
             this.levelGenerator = new Generators.LevelGenerator();
-            this.level = this.levelGenerator.generateLevel(15);
+            this.level = this.levelGenerator.generateLevel(
+                mapSize,
+                50,
+                3,
+                20,
+                3,
+                20,
+                50
+            );
             this.level.position.setTo(game.world.bounds.width / 2, game.world.bounds.height / 2);
 
             game.camera.x += game.world.bounds.width / 2 - game.width / 2;

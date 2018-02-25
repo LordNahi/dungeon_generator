@@ -14,17 +14,29 @@ namespace Level {
 
             this.tWidth = tWidth;
             this.tHeight = tHeight;
+            this.tTexture = this.generateTile(0xFFF);
             this.position.setTo(x, y);
 
-            this.add(this.generateTile());
+            this.add(this.tTexture);
 
             this.game.add.existing(this);
         }
 
-        private generateTile(): Phaser.Image {
+        public setColour(colour: number) {
+            // Debug jazz ...
+            if (this.tTexture) {
+                this.tTexture.destroy();
+                this.tTexture = this.generateTile(colour);
+
+                this.add(this.tTexture);
+            }
+        }
+
+        private generateTile(colour: number): Phaser.Image {
             var bmd: Phaser.Graphics;
             bmd = this.game.make.graphics();
-            bmd.lineStyle(2, 0x000, 1);
+            bmd.beginFill(colour, 1); 
+            bmd.lineStyle(2, 0x000000, 1);
             bmd.drawRect(
                 0,
                 0,
