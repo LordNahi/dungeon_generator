@@ -1,5 +1,7 @@
 namespace Generators {
     export class LevelGenerator {
+        private tiles: Level.LevelTile[];
+
         public generateLevel(
             mapSizeX: number,
             mapSizeY: number,
@@ -12,6 +14,8 @@ namespace Generators {
         ) : Level.LevelContainer {
             // Kick off the generator by seeding the random generator's seed ...
             Math.seedrandom(seed || this.generateSeed());
+
+            this.tiles = [];
 
             let levelContainer = new Level.LevelContainer();
             let levelGrid = this.generateGrid(mapSizeX, mapSizeY);
@@ -33,89 +37,95 @@ namespace Generators {
                 3,
                 3
             );
-            levelGrid[cursorX][cursorY] = 1;
+            this.placeTile(cursorX, cursorY, 3, 3, levelGrid);
+            this.tiles.push(tile);
             levelContainer.add(tile);
             tile.setColour(0xFF0000);
 
             if (roomCount) {
-                for (let i = 0; i < roomCount; i ++) {
+                for (let i = 1; i < roomCount; i ++) {
                     // Start tile size ...
                     // Keep it square for now ...
-                    // let tWidth = Math.min(minRoomWidth, Math.round(Math.random() * maxRoomWidth));
-                    // let tHeight = Math.min(minRoomHeight, Math.round(Math.random() * maxRoomHeight));
-                    let tWidth = 3;
-                    let tHeight = 3;
+                    let tWidthPrev = this.tiles[i - 1].tWidth;
+                    let tHeightPrev = this.tiles[i - 1].tHeight;
 
                     // Begin basic placement rules ...
                     // Iterating over each tile each iteration will be shit ...
-                    let tilePlaced = false;
-                    while (!tilePlaced) {
-                        // Set direction to place tile ...
-                        let direction = this.getValidDirection(cursorX, cursorY, levelGrid);
+                    // Set direction to place tile ...
+                    let tWidth = Math.max(minRoomWidth, Math.round(Math.random() * maxRoomWidth));
+                    let tHeight = Math.max(minRoomHeight, Math.round(Math.random() * maxRoomHeight));
 
-                        // Handle placement for each direction ...
-                        // Don't forget you're forcing the level to generate in the
-                        // middle of the grid, you haven't handled checking positions
-                        // outside of the grid ...
+                    let direction = this.getValidDirection(
+                        cursorX,
+                        cursorY,
+                        tWidth,
+                        tHeight,
+                        tWidthPrev,
+                        tHeightPrev,
+                        levelGrid
+                    );
 
-                        // Debugging ...
-                        let arrow = game.add.image(
-                            0,
-                            0,
-                            "arrow"
-                        );
+                    // Handle placement for each direction ...
+                    // Don't forget you're forcing the level to generate in the
+                    // middle of the grid, you haven't handled checking positions
+                    // outside of the grid ...
 
-                        switch (direction) {
-                            case "up":
-                                placeY -= Config.generator.tileSize * tHeight;
-                                cursorY -= 1;
+                    // Debugging ...
+                    let arrow = game.add.image(
+                        0,
+                        0,
+                        "arrow"
+                    );
 
-                                arrow.rotation = (2 * Math.PI) * 0.75;
-                                break;
+                    switch (direction) {
+                        case "up":
+                            placeY -= Config.generator.tileSize * tHeight;
+                            cursorY -= tHeight;
 
-                            case "down":
-                                placeY += Config.generator.tileSize * tHeight;
-                                cursorY += 1;
+                            arrow.rotation = (2 * Math.PI) * 0.75;
+                            break;
 
-                                arrow.rotation = (2 * Math.PI) * 0.25;
-                                break;
+                        case "down":
+                            placeY += Config.generator.tileSize * tHeightPrev;
+                            cursorY += tHeightPrev;
 
-                            case "left":
-                                placeX -= Config.generator.tileSize * tWidth;
-                                cursorX -= 1;
+                            arrow.rotation = (2 * Math.PI) * 0.25;
+                            break;
 
-                                arrow.rotation = (2 * Math.PI) * 0.5;
-                                break;
+                        case "left":
+                            placeX -= Config.generator.tileSize * tWidth;
+                            cursorX -= tWidth;
 
-                            case "right":
-                                placeX += Config.generator.tileSize * tWidth;
-                                cursorX += 1;
+                            arrow.rotation = (2 * Math.PI) * 0.5;
+                            break;
 
-                                arrow.rotation = (2 * Math.PI) * 0;
-                                break;
-                        }
+                        case "right":
+                            placeX += Config.generator.tileSize * tWidthPrev;
+                            cursorX += tWidthPrev;
 
-                        levelGrid[cursorX][cursorY] = 1;
-
-                        let tile = new Level.LevelTile(
-                            placeX,
-                            placeY,
-                            tWidth,
-                            tHeight
-                        );
-
-                        levelContainer.add(tile);
-
-                        arrow.x = tile.centerX;
-                        arrow.y = tile.centerY;
-                        arrow.anchor.setTo(0.5);
-
-                        levelContainer.add(arrow);
-
-                        tile.setColour(0xFFFFFF);
-
-                        tilePlaced = true;
+                            arrow.rotation = (2 * Math.PI) * 0;
+                            break;
                     }
+
+                    let tile = new Level.LevelTile(
+                        placeX,
+                        placeY,
+                        tWidth,
+                        tHeight
+                    );
+
+                    this.placeTile(cursorX, cursorY, tWidth, tHeight, levelGrid);
+
+                    this.tiles.push(tile);
+                    levelContainer.add(tile);
+
+                    arrow.x = tile.centerX;
+                    arrow.y = tile.centerY;
+                    arrow.anchor.setTo(0.5);
+
+                    levelContainer.add(arrow);
+
+                    tile.setColour(0xFFFFFF);
 
                     console.log("Room created!");
                 }
@@ -131,8 +141,11 @@ namespace Generators {
             let id = "";
             let alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
-            for (let i = 0; i < 5; i++)
+            for (let i = 0; i < 5; i++) {
                 id += alpha.charAt(Math.floor(Math.random() * alpha.length));
+            }
+
+            console.log("Generated Seed:", id);
 
             return id;
         }
@@ -151,14 +164,49 @@ namespace Generators {
             return levelGrid;
         }
 
-        public getValidDirection(cursorX, cursorY, levelGrid) {
-            let validDirections = [];
+        public getValidDirection(
+            cursorX: number,
+            cursorY: number,
+            tWidthCurrent: number,
+            tHeightCurrent: number,
+            tWidthPrev: number,
+            tHeightPrev: number,
+            levelGrid: number[][]
+        ) {
+            let validDirections = ["up", "down", "left", "right"];
             let direction;
 
-            if (levelGrid[cursorX][cursorY - 1] == 0) { validDirections.push("up"); }
-            if (levelGrid[cursorX][cursorY + 1] == 0) { validDirections.push("down"); }
-            if (levelGrid[cursorX - 1][cursorY] == 0) { validDirections.push("left"); }
-            if (levelGrid[cursorX + 1][cursorY] == 0) { validDirections.push("right"); }
+            // Check Up ...
+            for (let i = 0; i < tWidthCurrent; i ++) {
+                if (levelGrid[cursorX + i].slice(cursorY - tHeightCurrent, cursorY).reduce((a, b) => a + b)) {
+                    validDirections.splice(validDirections.indexOf("up"), 1);
+                    break;
+                }
+            }
+
+            // Check Down ...
+            for (let i = 0; i < tWidthCurrent; i ++) {
+                if (levelGrid[cursorX + i].slice(cursorY + tHeightPrev, cursorY + tHeightPrev + tHeightCurrent + 1).reduce((a, b) => a + b)) {
+                    validDirections.splice(validDirections.indexOf("down"), 1);
+                    break;
+                }
+            }
+
+            // Check Left ...
+            for (let i = 0; i < tWidthCurrent; i ++) {
+                if (levelGrid[(cursorX - tWidthCurrent) + i].slice(cursorY, cursorY + tHeightCurrent).reduce((a, b) => a + b)) {
+                    validDirections.splice(validDirections.indexOf("left"), 1);
+                    break;
+                }
+            }
+
+            // Check Right ...
+            for (let i = 0; i < tWidthCurrent; i ++) {
+                if (levelGrid[(cursorX + tWidthPrev) + i].slice(cursorY, cursorY + tHeightCurrent).reduce((a, b) => a + b)) {
+                    validDirections.splice(validDirections.indexOf("right"), 1);
+                    break;
+                }
+            }
 
             direction = validDirections[Math.floor(Math.random() * validDirections.length)];
 
@@ -166,6 +214,16 @@ namespace Generators {
             console.log("Chose:", direction);
 
             return direction;
+        }
+
+        public placeTile(cursorX, cursorY, tWidth, tHeight, levelGrid) {
+            for (let i = 0; i < tWidth; i ++) {
+                for (let j = 0; j < tHeight; j ++) {
+                    if (levelGrid[cursorX + i][cursorY + j] != undefined) {
+                        levelGrid[cursorX + i][cursorY + j] = 1;
+                    }
+                }
+            }
         }
     }
 }

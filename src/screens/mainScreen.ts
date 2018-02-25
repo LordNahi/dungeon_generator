@@ -12,19 +12,22 @@ namespace Screens {
             game.stage.backgroundColor = 0xffffff;
             this.cursors = game.input.keyboard.createCursorKeys();
 
-            let mapSize = 150;
+            // Currently not handling when attempting to look outside array
+            // boundaries, just making the map massive and starting from the
+            // center to minimize the chance ...
+            let mapSize = 500;
 
-            game.world.setBounds(0, 0, Config.generator.tileSize * mapSize, 3000);
+            game.world.setBounds(0, 0, Config.generator.tileSize * mapSize, Config.generator.tileSize * mapSize);
 
             this.levelGenerator = new Generators.LevelGenerator();
             this.level = this.levelGenerator.generateLevel(
                 mapSize,
+                mapSize,
+                3,
+                20,
+                3,
+                20,
                 50,
-                3,
-                20,
-                3,
-                20,
-                50
             );
             this.level.position.setTo(game.world.bounds.width / 2, game.world.bounds.height / 2);
 

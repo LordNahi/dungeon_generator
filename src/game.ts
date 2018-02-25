@@ -28,6 +28,6 @@ class App {
 }
 
 window.onload = () => {
-    gameRoot = new App(1280, 720);
+    gameRoot = new App(window.innerWidth, window.innerHeight);
     game = gameRoot.game;
 }

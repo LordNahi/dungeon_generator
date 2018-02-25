@@ -1,7 +1,7 @@
 namespace Level {
     export class LevelTile extends Phaser.Group {
-        private tWidth: number;
-        private tHeight: number;
+        public readonly tWidth: number;
+        public readonly tHeight: number;
         private tTexture: Phaser.Image;
 
         constructor(
