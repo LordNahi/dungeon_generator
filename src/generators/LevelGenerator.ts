@@ -1,6 +1,6 @@
 namespace Generators {
     export class LevelGenerator {
-        private tiles: Level.LevelTile[];
+        private tileStack: Level.LevelTile[];
 
         public generateLevel(
             mapSizeX: number,
@@ -15,7 +15,7 @@ namespace Generators {
             // Kick off the generator by seeding the random generator's seed ...
             Math.seedrandom(seed || this.generateSeed());
 
-            this.tiles = [];
+            this.tileStack = [];
 
             let levelContainer = new Level.LevelContainer();
             let levelGrid = this.generateGrid(mapSizeX, mapSizeY);
@@ -30,40 +30,63 @@ namespace Generators {
             let placeX = 0;
             let placeY = 0;
 
+            let startRoomWidth = 3;
+            let startRoomHeight = 3;
+
             // Place first tile ...
             let tile = new Level.LevelTile(
                 placeX,
                 placeY,
-                3,
-                3
+                startRoomWidth,
+                startRoomHeight,
+                cursorX,
+                cursorY
             );
-            this.placeTile(cursorX, cursorY, 3, 3, levelGrid);
-            this.tiles.push(tile);
+            this.placeTile(cursorX, cursorY, startRoomWidth, startRoomHeight, levelGrid);
+            this.tileStack.push(tile);
             levelContainer.add(tile);
             tile.setColour(0xFF0000);
 
             if (roomCount) {
-                for (let i = 1; i < roomCount; i ++) {
-                    // Start tile size ...
-                    // Keep it square for now ...
-                    let tWidthPrev = this.tiles[i - 1].tWidth;
-                    let tHeightPrev = this.tiles[i - 1].tHeight;
-
+                let currentRoomCount = 0;
+                let tileStackPosition = 1;
+                while (currentRoomCount < roomCount) {
                     // Begin basic placement rules ...
                     // Iterating over each tile each iteration will be shit ...
                     // Set direction to place tile ...
                     let tWidth = Math.max(minRoomWidth, Math.round(Math.random() * maxRoomWidth));
                     let tHeight = Math.max(minRoomHeight, Math.round(Math.random() * maxRoomHeight));
 
-                    let direction = this.getValidDirection(
-                        cursorX,
-                        cursorY,
-                        tWidth,
-                        tHeight,
-                        tWidthPrev,
-                        tHeightPrev,
-                        levelGrid
-                    );
+                    let direction = null;
+                    let tilePrev = null;
+
+                    while (!direction) {
+                        tilePrev = this.tileStack[tileStackPosition - 1];
+
+                        direction = this.getValidDirection(
+                            cursorX,
+                            cursorY,
+                            tWidth,
+                            tHeight,
+                            tilePrev.tWidth,
+                            tilePrev.tHeight,
+                            levelGrid
+                        );
+
+                        if (!direction) {
+                            this.tileStack.pop();
+
+                            cursorX = tilePrev.cursorX;
+                            placeX = tilePrev.x;
+
+                            cursorY = tilePrev.cursorY;
+                            placeY = tilePrev.y;
+
+                            console.log("No direction found, backtracking ...");
+
+                            tileStackPosition--;
+                        }
+                    }
 
                     // Handle placement for each direction ...
                     // Don't forget you're forcing the level to generate in the
@@ -86,8 +109,8 @@ namespace Generators {
                             break;
 
                         case "down":
-                            placeY += Config.generator.tileSize * tHeightPrev;
-                            cursorY += tHeightPrev;
+                            placeY += Config.generator.tileSize * tilePrev.tHeight;
+                            cursorY += tilePrev.tHeight;
 
                             arrow.rotation = (2 * Math.PI) * 0.25;
                             break;
@@ -100,8 +123,8 @@ namespace Generators {
                             break;
 
                         case "right":
-                            placeX += Config.generator.tileSize * tWidthPrev;
-                            cursorX += tWidthPrev;
+                            placeX += Config.generator.tileSize * tilePrev.tWidth;
+                            cursorX += tilePrev.tWidth;
 
                             arrow.rotation = (2 * Math.PI) * 0;
                             break;
@@ -111,13 +134,18 @@ namespace Generators {
                         placeX,
                         placeY,
                         tWidth,
-                        tHeight
+                        tHeight,
+                        cursorX,
+                        cursorY
                     );
 
                     this.placeTile(cursorX, cursorY, tWidth, tHeight, levelGrid);
 
-                    this.tiles.push(tile);
+                    this.tileStack.push(tile);
                     levelContainer.add(tile);
+
+                    currentRoomCount ++;
+                    tileStackPosition ++;
 
                     arrow.x = tile.centerX;
                     arrow.y = tile.centerY;

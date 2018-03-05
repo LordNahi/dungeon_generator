@@ -2,18 +2,24 @@ namespace Level {
     export class LevelTile extends Phaser.Group {
         public readonly tWidth: number;
         public readonly tHeight: number;
+        public readonly cursorX: number;
+        public readonly cursorY: number;
         private tTexture: Phaser.Image;
 
         constructor(
             x: number,
             y: number,
             tWidth: number,
-            tHeight: number
+            tHeight: number,
+            cursorX: number,
+            cursorY: number,
         ) {
             super(game);
 
             this.tWidth = tWidth;
             this.tHeight = tHeight;
+            this.cursorX = cursorX;
+            this.cursorY = cursorY;
             this.tTexture = this.generateTile(0xFFF);
             this.position.setTo(x, y);
 
