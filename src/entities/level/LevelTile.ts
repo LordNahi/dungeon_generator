@@ -4,6 +4,7 @@ namespace Level {
         public readonly tHeight: number;
         public readonly cursorX: number;
         public readonly cursorY: number;
+        public readonly roomNumber: number;
         private tTexture: Phaser.Image;
 
         constructor(
@@ -13,6 +14,7 @@ namespace Level {
             tHeight: number,
             cursorX: number,
             cursorY: number,
+            roomNumber: number
         ) {
             super(game);
 
@@ -20,6 +22,7 @@ namespace Level {
             this.tHeight = tHeight;
             this.cursorX = cursorX;
             this.cursorY = cursorY;
+            this.roomNumber = roomNumber;
             this.tTexture = this.generateTile(0xFFF);
             this.position.setTo(x, y);
 

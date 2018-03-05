@@ -40,7 +40,8 @@ namespace Generators {
                 startRoomWidth,
                 startRoomHeight,
                 cursorX,
-                cursorY
+                cursorY,
+                0
             );
             this.placeTile(cursorX, cursorY, startRoomWidth, startRoomHeight, levelGrid);
             this.tileStack.push(tile);
@@ -76,15 +77,15 @@ namespace Generators {
                         if (!direction) {
                             this.tileStack.pop();
 
-                            cursorX = tilePrev.cursorX;
-                            placeX = tilePrev.x;
-
-                            cursorY = tilePrev.cursorY;
-                            placeY = tilePrev.y;
-
-                            console.log("No direction found, backtracking ...");
-
                             tileStackPosition--;
+
+                            cursorX = this.tileStack[tileStackPosition - 1].cursorX;
+                            placeX = this.tileStack[tileStackPosition - 1].x;
+
+                            cursorY = this.tileStack[tileStackPosition - 1].cursorY;
+                            placeY = this.tileStack[tileStackPosition - 1].y;
+
+                            console.log(`No direction found, backtracking to room ${this.tileStack[tileStackPosition - 1].roomNumber}`);
                         }
                     }
 
@@ -98,6 +99,16 @@ namespace Generators {
                         0,
                         0,
                         "arrow"
+                    );
+                    arrow.visible = false;
+
+                    let number = game.add.text(
+                        0,
+                        0,
+                        currentRoomCount.toString(),
+                        {
+                            fontSize: "16px"
+                        }
                     );
 
                     switch (direction) {
@@ -130,13 +141,16 @@ namespace Generators {
                             break;
                     }
 
+                    console.log(`Room ${currentRoomCount} going ${direction} from room ${tilePrev.roomNumber}`);
+
                     let tile = new Level.LevelTile(
                         placeX,
                         placeY,
                         tWidth,
                         tHeight,
                         cursorX,
-                        cursorY
+                        cursorY,
+                        currentRoomCount
                     );
 
                     this.placeTile(cursorX, cursorY, tWidth, tHeight, levelGrid);
@@ -147,16 +161,23 @@ namespace Generators {
                     currentRoomCount ++;
                     tileStackPosition ++;
 
+                    // Arrow for showing direction ...
                     arrow.x = tile.centerX;
                     arrow.y = tile.centerY;
                     arrow.anchor.setTo(0.5);
 
                     levelContainer.add(arrow);
 
-                    tile.setColour(0xFFFFFF);
+                    number.x = tile.centerX;
+                    number.y = tile.centerY;
+                    number.anchor.setTo(0.5);
 
-                    console.log("Room created!");
+                    levelContainer.add(number);
+
+                    tile.setColour(0xFFFFFF);
                 }
+
+                console.log(this.tileStack);
 
                 return levelContainer;
             } else {
@@ -214,7 +235,7 @@ namespace Generators {
 
             // Check Down ...
             for (let i = 0; i < tWidthCurrent; i ++) {
-                if (levelGrid[cursorX + i].slice(cursorY + tHeightPrev, cursorY + tHeightPrev + tHeightCurrent + 1).reduce((a, b) => a + b)) {
+                if (levelGrid[cursorX + i].slice(cursorY + tHeightPrev, cursorY + tHeightPrev + tHeightCurrent).reduce((a, b) => a + b)) {
                     validDirections.splice(validDirections.indexOf("down"), 1);
                     break;
                 }
@@ -237,9 +258,6 @@ namespace Generators {
             }
 
             direction = validDirections[Math.floor(Math.random() * validDirections.length)];
-
-            console.log("Valid Directions:", validDirections);
-            console.log("Chose:", direction);
 
             return direction;
         }
