@@ -55,22 +55,17 @@ namespace Generators {
                     // Begin basic placement rules ...
                     // Iterating over each tile each iteration will be shit ...
                     // Set direction to place tile ...
-                    let tWidth = Math.max(minRoomWidth, Math.round(Math.random() * maxRoomWidth));
-                    let tHeight = Math.max(minRoomHeight, Math.round(Math.random() * maxRoomHeight));
+                    this.getRoomConfig();
 
                     let direction = null;
-                    let tilePrev = null;
-
                     while (!direction) {
-                        tilePrev = this.tileStack[tileStackPosition - 1];
-
                         direction = this.getValidDirection(
                             cursorX,
                             cursorY,
                             tWidth,
                             tHeight,
-                            tilePrev.tWidth,
-                            tilePrev.tHeight,
+                            this.tileStack[tileStackPosition - 1].tWidth,
+                            this.tileStack[tileStackPosition - 1].tHeight,
                             levelGrid
                         );
 
@@ -94,14 +89,6 @@ namespace Generators {
                     // middle of the grid, you haven't handled checking positions
                     // outside of the grid ...
 
-                    // Debugging ...
-                    let arrow = game.add.image(
-                        0,
-                        0,
-                        "arrow"
-                    );
-                    arrow.visible = false;
-
                     let number = game.add.text(
                         0,
                         0,
@@ -115,33 +102,25 @@ namespace Generators {
                         case "up":
                             placeY -= Config.generator.tileSize * tHeight;
                             cursorY -= tHeight;
-
-                            arrow.rotation = (2 * Math.PI) * 0.75;
                             break;
 
                         case "down":
-                            placeY += Config.generator.tileSize * tilePrev.tHeight;
-                            cursorY += tilePrev.tHeight;
-
-                            arrow.rotation = (2 * Math.PI) * 0.25;
+                            placeY += Config.generator.tileSize * this.tileStack[tileStackPosition - 1].tHeight;
+                            cursorY += this.tileStack[tileStackPosition - 1].tHeight;
                             break;
 
                         case "left":
                             placeX -= Config.generator.tileSize * tWidth;
                             cursorX -= tWidth;
-
-                            arrow.rotation = (2 * Math.PI) * 0.5;
                             break;
 
                         case "right":
-                            placeX += Config.generator.tileSize * tilePrev.tWidth;
-                            cursorX += tilePrev.tWidth;
-
-                            arrow.rotation = (2 * Math.PI) * 0;
+                            placeX += Config.generator.tileSize * this.tileStack[tileStackPosition - 1].tWidth;
+                            cursorX += this.tileStack[tileStackPosition - 1].tWidth;
                             break;
                     }
 
-                    console.log(`Room ${currentRoomCount} going ${direction} from room ${tilePrev.roomNumber}`);
+                    console.log(`Room ${currentRoomCount} going ${direction} from room ${this.tileStack[tileStackPosition - 1].roomNumber}`);
 
                     let tile = new Level.LevelTile(
                         placeX,
@@ -160,13 +139,6 @@ namespace Generators {
 
                     currentRoomCount ++;
                     tileStackPosition ++;
-
-                    // Arrow for showing direction ...
-                    arrow.x = tile.centerX;
-                    arrow.y = tile.centerY;
-                    arrow.anchor.setTo(0.5);
-
-                    levelContainer.add(arrow);
 
                     number.x = tile.centerX;
                     number.y = tile.centerY;
@@ -270,6 +242,19 @@ namespace Generators {
                     }
                 }
             }
+        }
+
+        public getRoomConfig(): Level.ILevelConfig {
+            let roll = Math.random();
+            for (var name in RoomConfigs.roomProbabilities) {
+                if (RoomConfigs.roomProbabilities.hasOwnProperty(name)) {
+                    if (roll < RoomConfigs.roomProbabilities[name]) {
+
+                    }
+                }
+            }
+
+            return 
         }
     }
 }
