@@ -1,7 +1,6 @@
 namespace Level {
     export class LevelTile extends Phaser.Group {
-        public readonly tWidth: number;
-        public readonly tHeight: number;
+        public readonly config: ILevelConfig;
         public readonly cursorX: number;
         public readonly cursorY: number;
         public readonly roomNumber: number;
@@ -10,16 +9,14 @@ namespace Level {
         constructor(
             x: number,
             y: number,
-            tWidth: number,
-            tHeight: number,
+            config,
             cursorX: number,
             cursorY: number,
             roomNumber: number
         ) {
             super(game);
 
-            this.tWidth = tWidth;
-            this.tHeight = tHeight;
+            this.config = config;
             this.cursorX = cursorX;
             this.cursorY = cursorY;
             this.roomNumber = roomNumber;
@@ -49,8 +46,8 @@ namespace Level {
             bmd.drawRect(
                 0,
                 0,
-                Config.generator.tileSize * this.tWidth,
-                Config.generator.tileSize * this.tHeight
+                Config.generator.tileSize * this.config.tWidth,
+                Config.generator.tileSize * this.config.tHeight
                 );
 
             return this.game.make.image(0, 0, bmd.generateTexture());

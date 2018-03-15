@@ -103,4 +103,28 @@ namespace tools {
         // return pad(hrs) + ':' + pad(mins) + ':' + pad(secs); HH:MM:SS
         return pad(mins) + ":" + pad(secs);
     }
+
+    export function choices(map) {
+        let cumSum = 0;
+        let cumWeights = {};
+
+        // Sum Category weights ...
+        for (let name in map) {
+            if (map.hasOwnProperty(name)) {
+                cumSum += map[name];
+                cumWeights[name] = cumSum;
+            }
+        }
+
+        let roll = Math.random() * cumSum;
+
+        // Get Category ...
+        for (let name in cumWeights) {
+            if (roll < cumWeights[name]) {
+                return name;
+            }
+        }
+
+        return null;
+    }
 }

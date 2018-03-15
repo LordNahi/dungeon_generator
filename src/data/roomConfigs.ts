@@ -1,56 +1,75 @@
 namespace RoomConfigs {
-    // Balance category probabilities ...
+    // If rooms aren't in roomProbabilities, they won't be selected ...
     export var roomProbabilities = {
-        corridor: 0.5,
-        treasure: 0.001,
-        miniboss: 0.01,
-        boss: 0.0005,
+        corridor: 100,
+        treasure: 5,
+        miniboss: 20,
+        boss: 10,
     };
 
-    export var corridor: Level.ILevelConfig[] = [
-        {
-            name: "horizontal",
-            tWidth: 10,
-            tHeight: 3,
-            chance: 0.5,
-            colour: 0xFFFFFF
-        },
-        {
-            name: "vertical",
-            tWidth: 3,
-            tHeight: 10,
-            chance: 0.5,
-            colour: 0xFFFFFF
-        },
-    ];
+    export var config = {
+            start: [
+                {
+                    name: "basicStart",
+                    tWidth: 3,
+                    tHeight: 3,
+                    weight: 50,
+                    colour: 0xFF0000
+                },
+                {
+                    name: "rareStart",
+                    tWidth: 5,
+                    tHeight: 5,
+                    weight: 1,
+                    colour: 0x00FF00
+                }
+            ],
 
-    export var treasure: Level.ILevelConfig[] = [
-        {
-            name: "small",
-            tWidth: 3,
-            tHeight: 3,
-            chance: 1,
-            colour: 0xFFFF00
-        }
-    ];
+            corridor: [
+                {
+                    name: "horizontal",
+                    tWidth: 3,
+                    tHeight: 3,
+                    weight: 1,
+                    colour: 0xFFFFFF
+                },
+                {
+                    name: "vertical",
+                    tWidth: 3,
+                    tHeight: 3,
+                    weight: 1,
+                    colour: 0xFFFFFF
+                }
+            ],
 
-    export var miniBoss: Level.ILevelConfig[] = [
-        {
-            name: "testMiniBoss",
-            tWidth: 20,
-            tHeight: 20,
-            chance: 1,
-            colour: 0xFFA500
-        }
-    ];
+            treasure: [
+                {
+                    name: "small",
+                    tWidth: 2,
+                    tHeight: 2,
+                    weight: 1,
+                    colour: 0xFFFF00
+                }
+            ],
 
-    export var boss: Level.ILevelConfig[] = [
-        {
-            name: "testBoss",
-            tWidth: 30,
-            tHeight: 20,
-            chance: 1,
-            colour: 0xFF0000
+            miniboss: [
+                {
+                    name: "testMiniBoss",
+                    tWidth: 10,
+                    tHeight: 10,
+                    weight: 1,
+                    colour: 0xFFA500
+                }
+            ],
+
+            boss: [
+                {
+                    name: "testBoss",
+                    tWidth: 20,
+                    tHeight: 20,
+                    weight: 1,
+                    colour: 0xFF0000
+                }
+            ]
         }
-    ];
-}
+    }

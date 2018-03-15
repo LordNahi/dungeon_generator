@@ -30,23 +30,20 @@ namespace Generators {
             let placeX = 0;
             let placeY = 0;
 
-            let startRoomWidth = 3;
-            let startRoomHeight = 3;
-
             // Place first tile ...
+            let startRoom = this.getRoom("start");
             let tile = new Level.LevelTile(
                 placeX,
                 placeY,
-                startRoomWidth,
-                startRoomHeight,
+                startRoom,
                 cursorX,
                 cursorY,
                 0
             );
-            this.placeTile(cursorX, cursorY, startRoomWidth, startRoomHeight, levelGrid);
+            this.placeTile(cursorX, cursorY, startRoom.tWidth, startRoom.tHeight, levelGrid);
             this.tileStack.push(tile);
             levelContainer.add(tile);
-            tile.setColour(0xFF0000);
+            tile.setColour(startRoom.colour);
 
             if (roomCount) {
                 let currentRoomCount = 0;
@@ -55,17 +52,17 @@ namespace Generators {
                     // Begin basic placement rules ...
                     // Iterating over each tile each iteration will be shit ...
                     // Set direction to place tile ...
-                    this.getRoomConfig();
+                    let roomConfig = this.getRoom();
 
                     let direction = null;
                     while (!direction) {
                         direction = this.getValidDirection(
                             cursorX,
                             cursorY,
-                            tWidth,
-                            tHeight,
-                            this.tileStack[tileStackPosition - 1].tWidth,
-                            this.tileStack[tileStackPosition - 1].tHeight,
+                            roomConfig.tWidth,
+                            roomConfig.tHeight,
+                            this.tileStack[tileStackPosition - 1].config.tWidth,
+                            this.tileStack[tileStackPosition - 1].config.tHeight,
                             levelGrid
                         );
 
@@ -100,39 +97,38 @@ namespace Generators {
 
                     switch (direction) {
                         case "up":
-                            placeY -= Config.generator.tileSize * tHeight;
-                            cursorY -= tHeight;
+                            placeY -= Config.generator.tileSize * roomConfig.tHeight;
+                            cursorY -= roomConfig.tHeight;
                             break;
 
                         case "down":
-                            placeY += Config.generator.tileSize * this.tileStack[tileStackPosition - 1].tHeight;
-                            cursorY += this.tileStack[tileStackPosition - 1].tHeight;
+                            placeY += Config.generator.tileSize * this.tileStack[tileStackPosition - 1].config.tHeight;
+                            cursorY += this.tileStack[tileStackPosition - 1].config.tHeight;
                             break;
 
                         case "left":
-                            placeX -= Config.generator.tileSize * tWidth;
-                            cursorX -= tWidth;
+                            placeX -= Config.generator.tileSize * roomConfig.tWidth;
+                            cursorX -= roomConfig.tWidth;
                             break;
 
                         case "right":
-                            placeX += Config.generator.tileSize * this.tileStack[tileStackPosition - 1].tWidth;
-                            cursorX += this.tileStack[tileStackPosition - 1].tWidth;
+                            placeX += Config.generator.tileSize * this.tileStack[tileStackPosition - 1].config.tWidth;
+                            cursorX += this.tileStack[tileStackPosition - 1].config.tWidth;
                             break;
                     }
 
-                    console.log(`Room ${currentRoomCount} going ${direction} from room ${this.tileStack[tileStackPosition - 1].roomNumber}`);
+                    console.log(`Room ${currentRoomCount} going ${direction} from room ${this.tileStack[tileStackPosition - 1].roomNumber} - Room:`, roomConfig);
 
                     let tile = new Level.LevelTile(
                         placeX,
                         placeY,
-                        tWidth,
-                        tHeight,
+                        roomConfig,
                         cursorX,
                         cursorY,
                         currentRoomCount
                     );
 
-                    this.placeTile(cursorX, cursorY, tWidth, tHeight, levelGrid);
+                    this.placeTile(cursorX, cursorY, roomConfig.tWidth, roomConfig.tHeight, levelGrid);
 
                     this.tileStack.push(tile);
                     levelContainer.add(tile);
@@ -181,6 +177,10 @@ namespace Generators {
                 }
                 levelGrid.push(gridColumn);
             }
+
+            console.log("////////////////////////////// Level Grid //////////////////////////////////");
+            console.log(levelGrid);
+            console.log("////////////////////////////////////////////////////////////////////////////");
 
             return levelGrid;
         }
@@ -244,17 +244,22 @@ namespace Generators {
             }
         }
 
-        public getRoomConfig(): Level.ILevelConfig {
-            let roll = Math.random();
-            for (var name in RoomConfigs.roomProbabilities) {
-                if (RoomConfigs.roomProbabilities.hasOwnProperty(name)) {
-                    if (roll < RoomConfigs.roomProbabilities[name]) {
+        public getRoom(category?: string): Level.ILevelConfig {
+            let level: Level.ILevelConfig;
 
-                    }
-                }
+            if (!RoomConfigs.config[category]) {
+                category = tools.choices(RoomConfigs.roomProbabilities);
             }
 
-            return 
+            let levelMap = {};
+            let levels = RoomConfigs.config[category];
+
+            for (let i = 0; i < RoomConfigs.config[category].length; i ++) {
+                let level = RoomConfigs.config[category][i] as Level.ILevelConfig;
+                levelMap[i] = level.weight;
+            }
+
+            return levels[parseInt(tools.choices(levelMap))];
         }
     }
 }

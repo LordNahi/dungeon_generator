@@ -3,7 +3,7 @@ namespace Level {
         name: string;
         tWidth: number;
         tHeight: number;
-        chance: number;
+        weight: number;
         colour: number;
     }
 }

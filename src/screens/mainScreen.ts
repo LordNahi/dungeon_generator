@@ -28,7 +28,6 @@ namespace Screens {
                 3,
                 20,
                 70,
-                "biganimetiddies"
             );
             this.level.position.setTo(game.world.bounds.width / 2, game.world.bounds.height / 2);
 
