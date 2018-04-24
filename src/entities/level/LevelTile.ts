@@ -20,7 +20,7 @@ namespace Level {
             this.cursorX = cursorX;
             this.cursorY = cursorY;
             this.roomNumber = roomNumber;
-            this.tTexture = this.generateTile(0xFFF);
+            this.tTexture = this.generateTile(this.config.colour);
             this.position.setTo(x, y);
 
             this.add(this.tTexture);
@@ -42,7 +42,6 @@ namespace Level {
             var bmd: Phaser.Graphics;
             bmd = this.game.make.graphics();
             bmd.beginFill(colour, 1); 
-            bmd.lineStyle(2, 0x000000, 1);
             bmd.drawRect(
                 0,
                 0,

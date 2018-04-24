@@ -141,8 +141,6 @@ namespace Generators {
                     number.anchor.setTo(0.5);
 
                     levelContainer.add(number);
-
-                    tile.setColour(0xFFFFFF);
                 }
 
                 console.log(this.tileStack);
