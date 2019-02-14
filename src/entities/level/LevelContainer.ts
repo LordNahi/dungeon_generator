@@ -1,10 +1,9 @@
 namespace Level {
-    export class LevelContainer extends Phaser.Group {
+  export class LevelContainer extends Phaser.Group {
+    constructor() {
+      super(game);
 
-        constructor() {
-            super(game);
-
-            this.game.add.existing(this);
-        }
+      this.game.add.existing(this);
     }
+  }
 }

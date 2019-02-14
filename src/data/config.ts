@@ -1,5 +1,5 @@
 namespace Config {
-    export var generator = {
-        tileSize: 8,
-    }
+  export var generator = {
+    tileSize: 8
+  };
 }
