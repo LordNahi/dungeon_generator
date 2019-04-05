@@ -1,31 +1,20 @@
-namespace Screens {
-  export class LoadingScreen extends Phaser.State {
-    constructor() {
-      super();
-    }
+class LoadingScreen extends Phaser.Scene {
+  public preload() {
+    this.load.setPath("./assets/debug/");
 
-    public create() {
-      game.load.onLoadStart.addOnce(this.onLoadStart, this);
-      game.load.onLoadComplete.addOnce(this.onLoadComplete, this);
+    this.load.image("arrow");
 
-      this.prepareLoadStack();
-    }
+    this.load.once("file");
+  }
 
-    private prepareLoadStack() {
-      // Prepare load queue ...
-      this.game.load.image("arrow", "./assets/debug/arrow.png");
+  private onLoadStart() {
+    console.log("Loading assets ...");
+  }
 
-      // Kick off loader ...
-      this.game.load.start();
-    }
-
-    private onLoadStart() {
-      console.log("Loading assets ...");
-    }
-
-    private onLoadComplete() {
-      console.log("Assets loaded! Moving to next state ...");
-      this.game.state.start("main", true, false);
-    }
+  private onLoadComplete() {
+    console.log("Assets loaded! Moving to next state ...");
+    this.game.state.start("main", true, false);
   }
 }
+
+export default LoadingScreen;

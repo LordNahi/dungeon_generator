@@ -1,0 +1,37 @@
+export class MainScreen extends Phaser.State {
+    constructor() {
+        super();
+    }
+    create() {
+        game.stage.backgroundColor = 0xffffff;
+        this.cursors = game.input.keyboard.createCursorKeys();
+        // Currently not handling when attempting to look outside array
+        // boundaries, just making the map massive and starting from the
+        // center to minimize the chance ...
+        let mapSize = 500;
+        game.world.setBounds(0, 0, Config.generator.tileSize * mapSize, Config.generator.tileSize * mapSize);
+        this.levelGenerator = new Generators.LevelGenerator();
+        this.level = this.levelGenerator.generateLevel(mapSize, mapSize, 50);
+        this.level.position.setTo(game.world.bounds.width / 2, game.world.bounds.height / 2);
+        game.camera.x += game.world.bounds.width / 2 - game.width / 2;
+        game.camera.y += game.world.bounds.height / 2 - game.height / 2;
+    }
+    update() {
+        if (this.cursors.up.isDown) {
+            game.camera.y -= 10;
+        }
+        else if (this.cursors.down.isDown) {
+            game.camera.y += 10;
+        }
+        if (this.cursors.left.isDown) {
+            game.camera.x -= 10;
+        }
+        else if (this.cursors.right.isDown) {
+            game.camera.x += 10;
+        }
+    }
+    render() {
+        game.debug.cameraInfo(game.camera, 32, 32);
+    }
+}
+//# sourceMappingURL=mainScreen.js.map

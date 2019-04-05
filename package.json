@@ -1,0 +1,27 @@
+{
+  "name": "dungeon_generator",
+  "version": "1.0.0",
+  "description": "Simple dungeon generator project",
+  "main": "dist/app.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://lordnahi@bitbucket.org/lordnahi/dungeon_generator.git"
+  },
+  "author": "Nathan Nahi",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/lordnahi/dungeon_generator#readme",
+  "devDependencies": {
+    "phaser3-docs": "github:photonstorm/phaser3-docs",
+    "typescript": "^3.4.1"
+  },
+  "dependencies": {
+    "phaser": "^3.16.2",
+    "seedrandom": "^3.0.1"
+  }
+}

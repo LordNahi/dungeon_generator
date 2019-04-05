@@ -1,0 +1,1 @@
+{"version":3,"file":"compas.js","sourceRoot":"","sources":["../../../src/entities/level/compas.ts"],"names":[],"mappings":"AAAA,MAAM,OAAO,MAAM;IAMjB,YACE,KAAc,IAAI,EAClB,OAAgB,IAAI,EACpB,OAAgB,IAAI,EACpB,QAAiB,IAAI;QAErB,IAAI,CAAC,EAAE,GAAG,EAAE,CAAC;QACb,IAAI,CAAC,IAAI,GAAG,IAAI,CAAC;QACjB,IAAI,CAAC,IAAI,GAAG,IAAI,CAAC;QACjB,IAAI,CAAC,KAAK,GAAG,KAAK,CAAC;IACrB,CAAC;CACF"}
