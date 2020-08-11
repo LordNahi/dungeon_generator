@@ -4,7 +4,6 @@ A simple (and very outdated) attempt at creating a dungeon generator using Phase
 
 ## How to run
 
-- Install node packages using `npm i`
 - Build code by running either...
 
   ```
